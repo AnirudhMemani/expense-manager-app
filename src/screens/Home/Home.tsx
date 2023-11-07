@@ -4,6 +4,7 @@ import {
   View,
   TouchableWithoutFeedback,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {CustomText} from '../../components/CustomText';
@@ -120,7 +121,10 @@ const Home: React.FC<{
 
   // <-- Activity -->
   return (
-    <View style={globalStyles.container}>
+    <ScrollView
+      style={globalStyles.container}
+      showsVerticalScrollIndicator={false}
+      keyboardDismissMode="on-drag">
       <View
         style={{
           flex: 1,
@@ -175,10 +179,10 @@ const Home: React.FC<{
             </CustomText>
           </TouchableWithoutFeedback>
         </View>
-        <Transactions data={dummyData} />
+        <Transactions data={dummyData} isScrollable={false} />
       </View>
       <Loader />
-    </View>
+    </ScrollView>
   );
 };
 

@@ -15,7 +15,10 @@ import EntypoIcons from 'react-native-vector-icons/Entypo';
 import {COMMON_MSG} from '../utils/constants';
 import {PAYMENT_METHOD} from './constants';
 
-export const Transactions: React.FC<ITransactionProps> = ({data}) => {
+export const Transactions: React.FC<ITransactionProps> = ({
+  data,
+  isScrollable,
+}) => {
   const renderItem: ListRenderItem<ITransactionRecordsProps> = ({item}) => {
     const notes = item.note ?? COMMON_MSG.NOT_SPECIFIED;
     const payment_icon =
@@ -57,6 +60,8 @@ export const Transactions: React.FC<ITransactionProps> = ({data}) => {
         data={data}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
+        scrollEnabled={isScrollable}
+        automaticallyAdjustKeyboardInsets={true}
       />
     </View>
   );

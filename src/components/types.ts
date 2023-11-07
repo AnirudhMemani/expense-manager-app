@@ -14,4 +14,5 @@ export interface ITransactionRecordsProps {
 
 export interface ITransactionProps {
   data: ITransactionRecordsProps[];
+  isScrollable?: boolean;
 }
