@@ -1,4 +1,10 @@
-import {Image, StyleSheet, View, TouchableWithoutFeedback} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  View,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {CustomText} from '../../components/CustomText';
 import {useGlobalContext} from '../../components/ContextProvider';
@@ -10,14 +16,18 @@ import {LOGIN_MSG} from '../Login/constants';
 import {
   anonymouse_pfp,
   COMMON_MSG,
+  dateFormatter,
   logoutAndNavigateToLogin,
 } from '../../utils/constants';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {setLoadingStatus} from '../../redux/reducers/income-slice';
 import {Loader} from '../../components/Loader';
 import {globalStyles} from '../../utils/globalStyles';
-import Icons from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Floater} from '../../components/Floater';
+import {globalColors} from '../../utils/globalColors';
+import {Transactions} from '../../components/Transactions';
 
 const Home: React.FC<{
   navigation: NativeStackNavigationProp<any, any>;
@@ -30,16 +40,43 @@ const Home: React.FC<{
   const {user} = useAppSelector(state => state.login.userInfo);
 
   // <-- Variables -->
-  const date = new Date();
-  const hours = date.getHours();
+  const dateObject = new Date();
+  const hours = dateObject.getHours();
+  const localeDate = dateFormatter(dateObject);
   const name = user.name;
   const pfp = user.photo ? user.photo : anonymouse_pfp;
+  const balance = '20,000';
+  const dummyData = [
+    {
+      amount: 100,
+      note: 'Lorem ipsum dolor placeat quam ab nam, dolores nulla asperiores fugiat, quos rem eum vitae labore! Dolores animi tenetur deleniti totam, et quasi non incidunt!',
+      date: localeDate,
+      payment_mode: 1,
+    },
+    {
+      amount: 500,
+      note: 'cookies',
+      date: localeDate,
+      payment_mode: 2,
+    },
+    {
+      amount: 1000,
+      note: 'Lorem ipsum dolor placeat quam ab nam, dolores nulla asperiores fugiat, quos rem eum vitae labore! Dolores animi tenetur deleniti totam, et quasi non incidunt!',
+      date: localeDate,
+      payment_mode: 3,
+    },
+    {
+      amount: 10,
+      note: 'chips',
+      date: localeDate,
+      payment_mode: 4,
+    },
+  ];
 
   // <-- useStates -->
   const [greeting, setGreeting] = useState<string>();
 
   useEffect(() => {
-    console.log(hours);
     if (hours >= 6 && hours < 12) {
       setGreeting('Good Morning');
     } else if (hours >= 12 && hours < 17) {
@@ -84,7 +121,11 @@ const Home: React.FC<{
   // <-- Activity -->
   return (
     <View style={globalStyles.container}>
-      <View style={{marginHorizontal: commonMargin}}>
+      <View
+        style={{
+          flex: 1,
+          marginHorizontal: commonMargin,
+        }}>
         <View style={styles.search_container}>
           <View>
             <CustomText>{greeting}</CustomText>
@@ -95,25 +136,46 @@ const Home: React.FC<{
           </View>
         </View>
         <View style={styles.search_container}>
-          <CustomText extraStyles={{fontWeight: '600'}}>This month</CustomText>
+          <CustomText extraStyles={{fontWeight: '600', fontSize: 18}}>
+            This month
+          </CustomText>
           <TouchableWithoutFeedback>
-            <Icons name="search-sharp" size={25} color="#dcb85d" />
+            <Ionicons name="search-sharp" size={25} color="#dcb85d" />
           </TouchableWithoutFeedback>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
+        <View style={styles.floaterContainer}>
           {Floater(
             'rgba(208, 102, 122, 1)',
             'arrow-up-outline',
             COMMON_MSG.SPENDING,
-            10.12,
+            10.1,
           )}
           {Floater('#437746', 'arrow-down-outline', COMMON_MSG.INCOME)}
         </View>
+        <View style={[globalStyles.alignCenter, {paddingVertical: 20}]}>
+          <CustomText extraStyles={styles.balance_floater}>
+            Balance{' '}
+            {
+              <MaterialCommunityIcon
+                name="fast-forward"
+                size={15}
+                color="rgba(248, 248, 255, 0.8)"
+              />
+            }{' '}
+            ₹{balance}
+          </CustomText>
+        </View>
+        <View style={styles.search_container}>
+          <CustomText extraStyles={{fontSize: 18}}>
+            Recent transactions
+          </CustomText>
+          <TouchableWithoutFeedback>
+            <CustomText extraStyles={{color: globalColors.button_active}}>
+              See all
+            </CustomText>
+          </TouchableWithoutFeedback>
+        </View>
+        <Transactions data={dummyData} />
       </View>
       <Loader />
     </View>
@@ -131,7 +193,21 @@ const styles = StyleSheet.create({
   search_container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 15,
+    marginVertical: 17,
+  },
+  floaterContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  balance_floater: {
+    fontSize: 16,
+    textAlign: 'center',
+    borderRadius: 50,
+    backgroundColor: globalColors.cards_bg,
+    paddingVertical: 6,
+    paddingHorizontal: 20,
+    color: 'rgba(248, 248, 255, 0.8)',
   },
 });
 

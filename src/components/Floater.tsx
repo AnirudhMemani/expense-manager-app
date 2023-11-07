@@ -1,6 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {globalColors} from '../utils/globalColors';
 
 export const Floater = (
   backgroundColor: string,
@@ -36,12 +37,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   icon: {
-    backgroundColor: 'rgba(248, 248, 255, 0.3)',
+    backgroundColor: globalColors.inherit,
     padding: 10,
     borderRadius: 50,
     marginRight: 15,
   },
   textStyle: {
-    color: 'rgba(248, 248, 255, 0.3)',
+    color: globalColors.inherit,
   },
 });

@@ -7,6 +7,7 @@ export type RootStackNavigationProps = {
 export type TBottomTabNavigationProps = {
   Home: undefined;
   Accounts: undefined;
+  AddTransaction: undefined;
   Analysis: undefined;
   More: undefined;
 };

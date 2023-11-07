@@ -1,0 +1,4 @@
+export enum APP_SETTINGS {
+  MAX_FONT_SIZE_MULTIPLIER = 1,
+  NUMBER_OF_LINES = 2,
+}

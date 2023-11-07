@@ -53,7 +53,7 @@ const Login: React.FC<TLoginProps> = ({navigation}) => {
       if (isLoggedIn) {
         navigation.reset({
           index: 0,
-          routes: [{name: STACK_SCREENS.HOME}],
+          routes: [{name: STACK_SCREENS.BOTTOM_NAVIGATION}],
         });
       }
     } catch (error: any) {
@@ -80,7 +80,7 @@ const Login: React.FC<TLoginProps> = ({navigation}) => {
       printLogs(TAG, '| successful:', anonymouseUser);
       navigation.reset({
         index: 0,
-        routes: [{name: STACK_SCREENS.HOME}],
+        routes: [{name: STACK_SCREENS.BOTTOM_NAVIGATION}],
       });
     } catch (error) {
       printLogs(TAG, '| failed with error:', error);

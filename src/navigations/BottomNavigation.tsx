@@ -7,8 +7,9 @@ import Analysis from '../screens/Analysis/Analysis';
 import Accounts from '../screens/Accounts/Accounts';
 import More from '../screens/More/More';
 import {globalColors} from '../utils/globalColors';
-import Icons from 'react-native-vector-icons/Ionicons';
-import {TabIcon} from './TabIcon';
+import {TabIcon, VectorIcons} from './TabIcon';
+import TopNavigation from './TopNavigation';
+import BTabButton from '../screens/AddTransaction/BTabButton';
 
 const BottomNavigation: React.FC = () => {
   const BottomTab = createBottomTabNavigator<TBottomTabNavigationProps>();
@@ -17,17 +18,24 @@ const BottomNavigation: React.FC = () => {
       initialRouteName={BOTTOM_NAV_SCREENS.HOME}
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: globalColors.button_active,
-        tabBarInactiveTintColor: globalColors.button_inactive,
-        tabBarInactiveBackgroundColor: globalColors.tab_bg_color,
-        tabBarActiveBackgroundColor: globalColors.tab_bg_color,
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          backgroundColor: globalColors.tab_bg_color,
+          height: 70,
+          borderColor: globalColors.tab_bg_color,
+        },
       }}>
       <BottomTab.Screen
         name={BOTTOM_NAV_SCREENS.HOME}
         component={Home}
         options={{
           tabBarIcon: props => (
-            <TabIcon props={props} name={BOTTOM_NAV_ICONS.HOME} />
+            <TabIcon
+              props={props}
+              name={BOTTOM_NAV_ICONS.HOME}
+              label={BOTTOM_NAV_SCREENS.HOME}
+              type={VectorIcons.Entypo}
+            />
           ),
         }}
       />
@@ -36,8 +44,29 @@ const BottomNavigation: React.FC = () => {
         component={Analysis}
         options={{
           tabBarIcon: props => (
-            <TabIcon props={props} name={BOTTOM_NAV_ICONS.ANALYSIS} />
+            <TabIcon
+              props={props}
+              name={BOTTOM_NAV_ICONS.ANALYSIS}
+              label={BOTTOM_NAV_SCREENS.ANALYSIS}
+              type={VectorIcons.Entypo}
+            />
           ),
+        }}
+      />
+      <BottomTab.Screen
+        name={BOTTOM_NAV_SCREENS.ADD_TRANSACTIONS}
+        component={TopNavigation}
+        options={{
+          tabBarIcon: props => (
+            <TabIcon
+              props={props}
+              name={BOTTOM_NAV_ICONS.ADD_TRANSACTIONS}
+              size={25}
+              color={'black'}
+              type={VectorIcons.Feather}
+            />
+          ),
+          tabBarButton: props => <BTabButton {...props} />,
         }}
       />
       <BottomTab.Screen
@@ -45,7 +74,12 @@ const BottomNavigation: React.FC = () => {
         component={Accounts}
         options={{
           tabBarIcon: props => (
-            <TabIcon props={props} name={BOTTOM_NAV_ICONS.ACCOUNTS} />
+            <TabIcon
+              props={props}
+              name={BOTTOM_NAV_ICONS.ACCOUNTS}
+              label={BOTTOM_NAV_SCREENS.ACCOUNTS}
+              type={VectorIcons.Entypo}
+            />
           ),
         }}
       />
@@ -54,7 +88,12 @@ const BottomNavigation: React.FC = () => {
         component={More}
         options={{
           tabBarIcon: props => (
-            <TabIcon props={props} name={BOTTOM_NAV_ICONS.MORE} />
+            <TabIcon
+              props={props}
+              name={BOTTOM_NAV_ICONS.MORE}
+              label={BOTTOM_NAV_SCREENS.MORE}
+              type={VectorIcons.Entypo}
+            />
           ),
         }}
       />
