@@ -24,20 +24,6 @@ const Login: React.FC<TLoginProps> = ({navigation}) => {
   const {commonMargin, commonSpace} = useGlobalContext();
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    try {
-      GoogleSignin.configure({
-        webClientId:
-          '190249501462-352hfghpf6gqrh499unb000eg9jkej8d.apps.googleusercontent.com',
-      });
-    } catch (error) {
-      printLogs(
-        'GoogleSignin.configure() | webClientId not found or invalid | Error thrown:',
-        error,
-      );
-    }
-  }, []);
-
   const googleSignAuthentication = async () => {
     const TAG = googleSignAuthentication.name;
     try {

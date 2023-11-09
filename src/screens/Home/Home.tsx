@@ -29,6 +29,7 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 import {Floater} from '../../components/Floater';
 import {globalColors} from '../../utils/globalColors';
 import {Transactions} from '../../components/Transactions';
+import firestore from '@react-native-firebase/firestore';
 
 const Home: React.FC<{
   navigation: NativeStackNavigationProp<any, any>;
@@ -45,7 +46,7 @@ const Home: React.FC<{
   const hours = dateObject.getHours();
   const localeDate = dateFormatter(dateObject);
   const name = user.name;
-  const pfp = user.photo ? user.photo : anonymouse_pfp;
+  const pfp = user.photo ?? anonymouse_pfp;
   const balance = '20,000';
   const dummyData = [
     {
@@ -88,6 +89,11 @@ const Home: React.FC<{
       setGreeting('Hello');
     }
   }, [hours]);
+
+  const testFireStore = async () => {
+    const data = await firestore().collection('users').get();
+    printLogs('User data:', data.docs[0].data().email);
+  };
 
   // <-- Logout testing -->
   const logout = async () => {
@@ -180,6 +186,16 @@ const Home: React.FC<{
           </TouchableWithoutFeedback>
         </View>
         <Transactions data={dummyData} isScrollable={false} />
+        <TouchableOpacity
+          onPress={testFireStore}
+          style={[styles.balance_floater, {marginVertical: 20}]}>
+          <CustomText>Call FireStore</CustomText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={logout}
+          style={[styles.balance_floater, {marginVertical: 20}]}>
+          <CustomText>Logout</CustomText>
+        </TouchableOpacity>
       </View>
       <Loader />
     </ScrollView>

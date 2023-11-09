@@ -6,6 +6,7 @@ import {STACK_SCREENS} from '../../navigations/constants';
 import {EncryptedStorageUtils} from '../../utils/encrypted-storage-utils';
 import {printLogs} from '../../utils/log-utils';
 import {COMMON_MSG} from '../../utils/constants';
+import {globalColors} from '../../utils/globalColors';
 
 const Splash: React.FC<{
   navigation: NativeStackNavigationProp<any>;
