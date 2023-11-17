@@ -2,6 +2,9 @@ export enum STACK_SCREENS {
   BOTTOM_NAVIGATION = 'BottomNavigation',
   SPLASH = 'Splash',
   LOGIN = 'Login',
+  EXPENSE = 'Expense',
+  INCOME = 'Income',
+  TRANSFER = 'Transfer',
 }
 
 export enum BOTTOM_NAV_SCREENS {
@@ -18,10 +21,4 @@ export enum BOTTOM_NAV_ICONS {
   ACCOUNTS = 'open-book',
   MORE = 'dots-three-horizontal',
   ADD_TRANSACTIONS = 'plus',
-}
-
-export enum TOP_NAV_SCREENS {
-  EXPENSE = 'Expense',
-  INCOME = 'Income',
-  TRANSFER = 'Transfer',
 }

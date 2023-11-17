@@ -1,12 +1,22 @@
 import {StyleSheet, View, Pressable, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {globalColors} from '../../utils/globalColors';
-import {BottomTabBarButtonProps} from '@react-navigation/bottom-tabs';
+import {
+  BottomTabBarButtonProps,
+  BottomTabNavigationProp,
+} from '@react-navigation/bottom-tabs';
+import {STACK_SCREENS} from '../../navigations/constants';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-const BTabButton = (props: BottomTabBarButtonProps) => {
+const BTabButton = (
+  props: BottomTabBarButtonProps,
+  navigation: NativeStackNavigationProp<any, any>,
+) => {
   const {children, onPress} = props;
   return (
-    <Pressable style={styles.container} onPress={onPress}>
+    <Pressable
+      style={styles.container}
+      onPress={() => navigation.navigate(STACK_SCREENS.EXPENSE)}>
       <View style={styles.button}>{children}</View>
     </Pressable>
   );

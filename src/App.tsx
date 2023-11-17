@@ -11,9 +11,28 @@ import {PersistGate} from 'redux-persist/integration/react';
 import {Loader, testLoader} from './components/Loader';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {printLogs} from './utils/log-utils';
+import {registerTranslation} from 'react-native-paper-dates';
 
 const App: React.FC = () => {
   useEffect(() => {
+    registerTranslation('enGB', {
+      save: 'Save',
+      selectSingle: 'SELECT DATE',
+      selectMultiple: 'SELECT DATES',
+      selectRange: 'SELECT PERIOD',
+      notAccordingToDateFormat: inputFormat =>
+        `Invalid! Date format must be in ${inputFormat}`,
+      mustBeHigherThan: date => `Date must be later then ${date}`,
+      mustBeLowerThan: date => `Date must be earlier then ${date}`,
+      mustBeBetween: (startDate, endDate) =>
+        `Dates must be between ${startDate} - ${endDate}`,
+      dateIsDisabled: 'Invalid date!',
+      previous: 'PREVIOUS',
+      next: 'NEXT',
+      typeInDate: 'Type in date',
+      pickDateFromCalendar: 'Pick a date from calendar',
+      close: 'CLOSE',
+    });
     try {
       GoogleSignin.configure({
         webClientId:

@@ -1,9 +1,10 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import {globalStyles} from '../../utils/globalStyles';
 
 const Transfer = () => {
   return (
-    <View>
+    <View style={[globalStyles.container, globalStyles.alignCenter]}>
       <Text>Transfer</Text>
     </View>
   );

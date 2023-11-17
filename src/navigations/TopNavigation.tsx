@@ -1,20 +1,14 @@
-import React from 'react';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {TOP_NAV_SCREENS} from './constants';
-import Expense from '../screens/AddTransaction/Expense';
-import Income from '../screens/AddTransaction/Income';
-import Transfer from '../screens/AddTransaction/Transfer';
+import React, {useEffect} from 'react';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {STACK_SCREENS} from './constants';
 
-const Tab = createMaterialTopTabNavigator();
-
-const TopNavigation = () => {
-  return (
-    <Tab.Navigator>
-      <Tab.Screen name={TOP_NAV_SCREENS.EXPENSE} component={Expense} />
-      <Tab.Screen name={TOP_NAV_SCREENS.INCOME} component={Income} />
-      <Tab.Screen name={TOP_NAV_SCREENS.TRANSFER} component={Transfer} />
-    </Tab.Navigator>
-  );
+const TopNavigation: React.FC<{navigation: NativeStackNavigationProp<any>}> = ({
+  navigation,
+}) => {
+  useEffect(() => {
+    navigation.replace(STACK_SCREENS.EXPENSE);
+  }, []);
+  return <></>;
 };
 
 export default TopNavigation;

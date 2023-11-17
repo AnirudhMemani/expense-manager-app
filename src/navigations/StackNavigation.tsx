@@ -5,6 +5,9 @@ import Splash from '../screens/Login/Splash';
 import Login from '../screens/Login/Login';
 import {RootStackNavigationProps} from './types';
 import BottomNavigation from './BottomNavigation';
+import Expense from '../screens/AddTransaction/Expense';
+import Income from '../screens/AddTransaction/Income';
+import Transfer from '../screens/AddTransaction/Transfer';
 
 const Stack = createNativeStackNavigator<RootStackNavigationProps>();
 
@@ -21,6 +24,9 @@ const StackNavigation = () => {
         name={STACK_SCREENS.BOTTOM_NAVIGATION}
         component={BottomNavigation}
       />
+      <Stack.Screen name={STACK_SCREENS.EXPENSE} component={Expense} />
+      <Stack.Screen name={STACK_SCREENS.INCOME} component={Income} />
+      <Stack.Screen name={STACK_SCREENS.TRANSFER} component={Transfer} />
     </Stack.Navigator>
   );
 };

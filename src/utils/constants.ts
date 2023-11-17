@@ -4,6 +4,7 @@ import {STACK_SCREENS} from '../navigations/constants';
 import {EncryptedStorageUtils} from './encrypted-storage-utils';
 import {printLogs} from './log-utils';
 import auth from '@react-native-firebase/auth';
+import {CalendarDate} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 
 export enum COMMON_MSG {
   YES = 'Yes',
@@ -42,11 +43,14 @@ export const logoutAndNavigateToLogin = async (
 export const anonymouse_pfp =
   'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
 
-export const dateFormatter = (date: Date) => {
+export const dateFormatter = (
+  date: Date | CalendarDate,
+  yearFormatType?: '2-digit' | 'numeric' | undefined,
+) => {
   const formater = new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: 'short',
-    year: '2-digit',
+    year: yearFormatType ?? '2-digit',
   });
   return formater.format(date);
 };

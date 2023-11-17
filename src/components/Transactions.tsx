@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 50,
     marginRight: 20,
-    backgroundColor: globalColors.inherit_lighter,
+    backgroundColor: globalColors.inherit_darker,
     ...globalStyles.alignCenter,
   },
   icon: {

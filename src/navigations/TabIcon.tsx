@@ -11,6 +11,7 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Foundation from 'react-native-vector-icons/Foundation';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import fontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {CustomText} from '../components/CustomText';
 import {globalColors} from '../utils/globalColors';
 
@@ -27,6 +28,7 @@ export const VectorIcons = {
   Octicons,
   Foundation,
   EvilIcons,
+  fontAwesome6,
 };
 
 export const TabIcon: React.FC<{

@@ -10,8 +10,11 @@ import {globalColors} from '../utils/globalColors';
 import {TabIcon, VectorIcons} from './TabIcon';
 import TopNavigation from './TopNavigation';
 import BTabButton from '../screens/AddTransaction/BTabButton';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-const BottomNavigation: React.FC = () => {
+const BottomNavigation: React.FC<{
+  navigation: NativeStackNavigationProp<any, any>;
+}> = ({navigation}) => {
   const BottomTab = createBottomTabNavigator<TBottomTabNavigationProps>();
   return (
     <BottomTab.Navigator
@@ -20,9 +23,9 @@ const BottomNavigation: React.FC = () => {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: globalColors.tab_bg_color,
+          backgroundColor: globalColors.bottomTab_bg_color,
           height: 70,
-          borderColor: globalColors.tab_bg_color,
+          borderColor: globalColors.bottomTab_bg_color,
         },
       }}>
       <BottomTab.Screen
@@ -66,7 +69,7 @@ const BottomNavigation: React.FC = () => {
               type={VectorIcons.Feather}
             />
           ),
-          tabBarButton: props => <BTabButton {...props} />,
+          tabBarButton: props => BTabButton(props, navigation),
         }}
       />
       <BottomTab.Screen
