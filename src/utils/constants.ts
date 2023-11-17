@@ -18,6 +18,12 @@ export enum COMMON_MSG {
   NOT_SPECIFIED = 'Not specified',
 }
 
+export enum ERROR_MESSAGE {
+  EMPTY_TEXT_INPUT = "Amount can't be empty!",
+  TRANSACTION_AMT_EXCEEDED = 'Amount must be less than 10000000000',
+  NOTE_LIMIT_EXCEEDED = 'Note must not exceed 500 characters!',
+}
+
 export const logoutAndNavigateToLogin = async (
   navigation: NativeStackNavigationProp<any, any>,
 ) => {

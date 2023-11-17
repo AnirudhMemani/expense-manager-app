@@ -1,9 +1,17 @@
+import {TextInput} from 'react-native';
+import {LegacyRef} from 'react';
 import {TextStyle, ViewStyle} from 'react-native/types';
+import {StyleProp} from 'react-native/types';
 
 export type CustomTextProps = {
   children?: any;
-  extraStyles?: ViewStyle | TextStyle;
+  extraStyles?: StyleProp<ViewStyle | TextStyle>;
 };
+
+export interface IErrorMsgProps {
+  extraStyles?: StyleProp<ViewStyle | TextStyle>;
+  message: string;
+}
 
 export interface ITransactionRecordsProps {
   amount: number;
@@ -18,11 +26,16 @@ export interface ITransactionProps {
 }
 
 export type TCustomTextInputProps = {
+  reference?: LegacyRef<TextInput>;
   placeholder: string;
   maxLength?: number;
   extraStyles?: ViewStyle | TextStyle;
   autoFocus?: boolean;
   setIsInputEmpty?: React.Dispatch<React.SetStateAction<boolean>>;
+  placeholderTintColor?: string;
+  multiline?: boolean;
+  numberOfLines?: number;
+  setIsExceededCharLimit?: React.Dispatch<React.SetStateAction<boolean>>;
   keyboardType?:
     | 'default'
     | 'numeric'

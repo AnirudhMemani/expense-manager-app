@@ -12,12 +12,14 @@ import {DatePickerModal} from 'react-native-paper-dates';
 import {CustomText} from '../components/CustomText';
 import {CalendarDate} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import {globalColors} from '../utils/globalColors';
-import {dateFormatter} from '../utils/constants';
+import {dateFormatter, ERROR_MESSAGE} from '../utils/constants';
 import {BOTTOM_NAV_SCREENS} from '../navigations/constants';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {TabIcon, VectorIcons} from '../navigations/TabIcon';
 import {CustomInput} from './CustomInput';
+import {useGlobalContext} from './ContextProvider';
+import {ErrorMsg} from './ErrorMsg';
 
 const NewTransaction: React.FC<{
   navigation: NativeStackNavigationProp<any, any>;
@@ -28,6 +30,10 @@ const NewTransaction: React.FC<{
   );
   const [calendarDate, setCalendarDate] = useState<CalendarDate>();
   const [isInputEmpty, setIsInputEmpty] = useState(false);
+  const [isExceededCharLimit, setIsExceededCharLimit] = useState(false);
+  const [isExceededNumericLimit, setIsExceededNumericLimit] = useState(false);
+
+  const {commonMargin} = useGlobalContext();
 
   return (
     <ScrollView
@@ -77,6 +83,7 @@ const NewTransaction: React.FC<{
             autoFocus={true}
             keyboardType={'numeric'}
             returnKeyType={'done'}
+            setIsExceededCharLimit={setIsExceededNumericLimit}
           />
           <TabIcon
             name="calculator"
@@ -86,10 +93,9 @@ const NewTransaction: React.FC<{
             color={globalColors.inherit_light}
           />
         </View>
-        {isInputEmpty && (
-          <CustomText extraStyles={styles.errorMsg}>
-            Amount can't be empty!
-          </CustomText>
+        {isInputEmpty && <ErrorMsg message={ERROR_MESSAGE.EMPTY_TEXT_INPUT} />}
+        {isExceededNumericLimit && (
+          <ErrorMsg message={ERROR_MESSAGE.TRANSACTION_AMT_EXCEEDED} />
         )}
       </View>
 
@@ -149,6 +155,42 @@ const NewTransaction: React.FC<{
           </View>
         </View>
       </TouchableHighlight>
+
+      {/* Other details */}
+      <CustomText
+        extraStyles={{
+          paddingHorizontal: commonMargin,
+          color: globalColors.gray,
+          marginVertical: commonMargin,
+        }}>
+        Other Details
+      </CustomText>
+      <View style={[styles.input_container, {alignItems: 'flex-start'}]}>
+        <TabIcon
+          name="notes"
+          type={VectorIcons.MaterialIcons}
+          size={30}
+          props={{focused: false}}
+          color={globalColors.cyan}
+        />
+        <CustomInput
+          placeholder="Write a note"
+          autoFocus={false}
+          returnKeyType={'default'}
+          extraStyles={{fontSize: 16, color: globalColors.white}}
+          placeholderTintColor={globalColors.inherit}
+          numberOfLines={10}
+          multiline={true}
+          maxLength={500}
+          setIsExceededCharLimit={setIsExceededCharLimit}
+        />
+      </View>
+      {isExceededCharLimit && (
+        <ErrorMsg
+          message={ERROR_MESSAGE.NOTE_LIMIT_EXCEEDED}
+          extraStyles={{fontSize: 14}}
+        />
+      )}
 
       {/* Date Picker Modal */}
       <DatePickerModal
