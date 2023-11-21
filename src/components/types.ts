@@ -36,6 +36,7 @@ export type TCustomTextInputProps = {
   multiline?: boolean;
   numberOfLines?: number;
   setIsExceededCharLimit?: React.Dispatch<React.SetStateAction<boolean>>;
+  defaultValue?: string;
   keyboardType?:
     | 'default'
     | 'numeric'
@@ -63,3 +64,8 @@ export type TCustomTextInputProps = {
     | 'done'
     | 'emergency-call';
 };
+
+export interface IChipsProps {
+  tag: string;
+  backgroundColor: string;
+}

@@ -18,4 +18,5 @@ export const globalColors = {
   inherit: 'rgba(248, 248, 255, 0.5)',
   inherit_light: 'rgba(248, 248, 255, 0.7)',
   inherit_lighter: 'rgba(248, 248, 255, 0.9)',
+  chip_bg: '#222126',
 };

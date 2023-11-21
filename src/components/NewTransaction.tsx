@@ -3,7 +3,6 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
-  Pressable,
   TouchableHighlight,
 } from 'react-native';
 import React, {useState} from 'react';
@@ -13,13 +12,12 @@ import {CustomText} from '../components/CustomText';
 import {CalendarDate} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
 import {globalColors} from '../utils/globalColors';
 import {dateFormatter, ERROR_MESSAGE} from '../utils/constants';
-import {BOTTOM_NAV_SCREENS} from '../navigations/constants';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {TabIcon, VectorIcons} from '../navigations/TabIcon';
 import {CustomInput} from './CustomInput';
 import {useGlobalContext} from './ContextProvider';
 import {ErrorMsg} from './ErrorMsg';
+import {CustomChips} from './Chips';
 
 const NewTransaction: React.FC<{
   navigation: NativeStackNavigationProp<any, any>;
@@ -66,7 +64,7 @@ const NewTransaction: React.FC<{
         <CustomText extraStyles={{paddingHorizontal: 30}}>{date}</CustomText>
       </TouchableOpacity>
 
-      {/* First */}
+      {/* Amount */}
       <View style={styles.content_container}>
         <CustomText extraStyles={styles.title}>Amount</CustomText>
         <View style={styles.input_container}>
@@ -84,6 +82,7 @@ const NewTransaction: React.FC<{
             keyboardType={'numeric'}
             returnKeyType={'done'}
             setIsExceededCharLimit={setIsExceededNumericLimit}
+            defaultValue={'0'}
           />
           <TabIcon
             name="calculator"
@@ -99,7 +98,7 @@ const NewTransaction: React.FC<{
         )}
       </View>
 
-      {/* Second */}
+      {/* Category */}
       <TouchableHighlight
         style={styles.content_container}
         touchSoundDisabled={true}>
@@ -112,10 +111,7 @@ const NewTransaction: React.FC<{
               props={{focused: false}}
               size={25}
             />
-            <CustomText
-              extraStyles={{flex: 1, paddingHorizontal: 30, fontSize: 18}}>
-              Others
-            </CustomText>
+            <CustomText extraStyles={styles.selected_text}>Others</CustomText>
             <TabIcon
               name="chevron-small-right"
               type={VectorIcons.Entypo}
@@ -127,7 +123,7 @@ const NewTransaction: React.FC<{
         </View>
       </TouchableHighlight>
 
-      {/* Third */}
+      {/* Payment */}
       <TouchableHighlight
         style={styles.content_container}
         underlayColor={globalColors.inherit}
@@ -141,10 +137,7 @@ const NewTransaction: React.FC<{
               props={{focused: false}}
               size={25}
             />
-            <CustomText
-              extraStyles={{flex: 1, paddingHorizontal: 30, fontSize: 18}}>
-              Binance
-            </CustomText>
+            <CustomText extraStyles={styles.selected_text}>Binance</CustomText>
             <TabIcon
               name="chevron-small-right"
               type={VectorIcons.Entypo}
@@ -191,6 +184,57 @@ const NewTransaction: React.FC<{
           extraStyles={{fontSize: 14}}
         />
       )}
+
+      {/* Tags */}
+      <View style={[styles.input_container, {marginTop: 20}]}>
+        <TabIcon
+          name="hash"
+          type={VectorIcons.Feather}
+          size={30}
+          props={{focused: false}}
+          color={globalColors.cyan}
+        />
+        <CustomInput
+          placeholder="Add tags"
+          autoFocus={false}
+          placeholderTintColor={globalColors.inherit}
+          extraStyles={{fontSize: 16}}
+          maxLength={25}
+          multiline={false}
+          numberOfLines={1}
+          returnKeyType={'default'}
+        />
+      </View>
+      <View style={[styles.tags, {marginVertical: 10}]}>
+        <CustomChips tag={'amazon 💼'} backgroundColor={globalColors.blue} />
+        <CustomChips tag={'vacation 💼'} backgroundColor={globalColors.blue} />
+        <CustomChips tag={'khan 💼'} backgroundColor={globalColors.blue} />
+        <CustomChips tag={'usman 💼'} backgroundColor={globalColors.blue} />
+        <CustomChips tag={'john'} backgroundColor={globalColors.blue} />
+        <CustomChips tag={'lauren 💼'} backgroundColor={globalColors.blue} />
+        <CustomChips tag={'hero 💼'} backgroundColor={globalColors.blue} />
+      </View>
+
+      {/* Picture */}
+      <TouchableOpacity
+        activeOpacity={1}
+        style={[styles.input_container, {marginVertical: 10}]}>
+        <TabIcon
+          name="insert-photo"
+          type={VectorIcons.MaterialIcons}
+          props={{focused: false}}
+          size={30}
+          color={globalColors.cyan}
+        />
+        <CustomText extraStyles={styles.selected_text}>Add photo</CustomText>
+        <TabIcon
+          name="chevron-small-right"
+          type={VectorIcons.Entypo}
+          props={{focused: false}}
+          size={25}
+          color={globalColors.inherit_lighter}
+        />
+      </TouchableOpacity>
 
       {/* Date Picker Modal */}
       <DatePickerModal
@@ -246,6 +290,16 @@ const styles = StyleSheet.create({
   },
   content_container: {
     paddingBottom: 15,
+  },
+  tags: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginLeft: 65,
+  },
+  selected_text: {
+    flex: 1,
+    paddingHorizontal: 30,
+    fontSize: 18,
   },
 });
 

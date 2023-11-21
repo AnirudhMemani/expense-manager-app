@@ -17,9 +17,10 @@ export const CustomInput: React.FC<TCustomTextInputProps> = ({
   multiline,
   numberOfLines,
   setIsExceededCharLimit,
+  defaultValue,
   extraStyles,
 }) => {
-  const [inputText, setInputText] = useState<string>('0');
+  const [inputText, setInputText] = useState<string | undefined>(defaultValue);
   const [occupiedLinesHeight, setOccupiedLinesHeight] = useState<
     number | undefined
   >(30);
@@ -85,6 +86,7 @@ export const CustomInput: React.FC<TCustomTextInputProps> = ({
         multiline={multiline}
         scrollEnabled={true}
         numberOfLines={numberOfLines}
+        defaultValue={inputText}
       />
     </>
   );

@@ -1,4 +1,5 @@
 import React from 'react';
+import {View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -14,6 +15,8 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import fontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {CustomText} from '../components/CustomText';
 import {globalColors} from '../utils/globalColors';
+import {TextStyle, ViewStyle} from 'react-native/types';
+import {StyleProp} from 'react-native/types';
 
 export const VectorIcons = {
   MaterialCommunityIcons,
@@ -40,6 +43,7 @@ export const TabIcon: React.FC<{
   label?: string;
   size?: number;
   color?: string;
+  extraStyles?: StyleProp<ViewStyle | TextStyle>;
 }> = props => {
   const ICON_SIZE = props.size ?? 25;
 
@@ -53,7 +57,13 @@ export const TabIcon: React.FC<{
 
   return (
     <>
-      <Icons name={props.name} size={ICON_SIZE} color={tintColor} />
+      {props.extraStyles ? (
+        <View style={props.extraStyles}>
+          <Icons name={props.name} size={ICON_SIZE} color={tintColor} />
+        </View>
+      ) : (
+        <Icons name={props.name} size={ICON_SIZE} color={tintColor} />
+      )}
       {props.label && (
         <CustomText extraStyles={{color: tintColor, fontSize: 16}}>
           {props.label}
