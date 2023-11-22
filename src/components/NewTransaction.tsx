@@ -4,6 +4,7 @@ import {
   View,
   ScrollView,
   TouchableHighlight,
+  Keyboard,
 } from 'react-native';
 import React, {useState} from 'react';
 import {globalStyles} from '../utils/globalStyles';
@@ -18,6 +19,7 @@ import {CustomInput} from './CustomInput';
 import {useGlobalContext} from './ContextProvider';
 import {ErrorMsg} from './ErrorMsg';
 import {CustomChips} from './Chips';
+import {ITagProps} from './types';
 
 const NewTransaction: React.FC<{
   navigation: NativeStackNavigationProp<any, any>;
@@ -30,8 +32,72 @@ const NewTransaction: React.FC<{
   const [isInputEmpty, setIsInputEmpty] = useState(false);
   const [isExceededCharLimit, setIsExceededCharLimit] = useState(false);
   const [isExceededNumericLimit, setIsExceededNumericLimit] = useState(false);
+  const [tagsInputText, setTagsInputText] = useState<string>();
+  const [tag, setTags] = useState<ITagProps[]>([
+    {
+      id: 1,
+      tag: 'online🛒',
+      isDummy: true,
+    },
+    {
+      id: 2,
+      tag: 'vacation🌳',
+      isDummy: true,
+    },
+    {
+      id: 3,
+      tag: 'sports⚽',
+      isDummy: true,
+    },
+    {
+      id: 4,
+      tag: 'business💰',
+      isDummy: true,
+    },
+    {
+      id: 5,
+      tag: 'groceries🧋',
+      isDummy: true,
+    },
+  ]);
 
   const {commonMargin} = useGlobalContext();
+
+  const displayTags = () => {
+    return tag.map(individualTag => {
+      if (individualTag.isSelected || individualTag.isDummy) {
+        return (
+          <CustomChips
+            key={individualTag.id}
+            tag={individualTag}
+            setTag={setTags}
+          />
+        );
+      }
+    });
+  };
+
+  const onSubmitTag = () => {
+    if (!tagsInputText?.trim()) return;
+    const tagExists = tag.some(
+      existingTags => existingTags.tag === tagsInputText,
+    );
+    if (!tagExists) {
+      setTags([
+        ...tag,
+        {id: tag.length + 1, tag: tagsInputText, isSelected: true},
+      ]);
+    }
+    setTagsInputText('');
+  };
+
+  const onChangeTag = (text: string) => {
+    if (text.includes(' ')) {
+      onSubmitTag();
+    } else {
+      setTagsInputText(text.trim());
+    }
+  };
 
   return (
     <ScrollView
@@ -162,7 +228,7 @@ const NewTransaction: React.FC<{
         <TabIcon
           name="notes"
           type={VectorIcons.MaterialIcons}
-          size={30}
+          size={25}
           props={{focused: false}}
           color={globalColors.cyan}
         />
@@ -190,7 +256,7 @@ const NewTransaction: React.FC<{
         <TabIcon
           name="hash"
           type={VectorIcons.Feather}
-          size={30}
+          size={25}
           props={{focused: false}}
           color={globalColors.cyan}
         />
@@ -203,17 +269,12 @@ const NewTransaction: React.FC<{
           multiline={false}
           numberOfLines={1}
           returnKeyType={'default'}
+          onSubmitEditing={onSubmitTag}
+          onChangeText={onChangeTag}
+          value={tagsInputText}
         />
       </View>
-      <View style={[styles.tags, {marginVertical: 10}]}>
-        <CustomChips tag={'amazon 💼'} backgroundColor={globalColors.blue} />
-        <CustomChips tag={'vacation 💼'} backgroundColor={globalColors.blue} />
-        <CustomChips tag={'khan 💼'} backgroundColor={globalColors.blue} />
-        <CustomChips tag={'usman 💼'} backgroundColor={globalColors.blue} />
-        <CustomChips tag={'john'} backgroundColor={globalColors.blue} />
-        <CustomChips tag={'lauren 💼'} backgroundColor={globalColors.blue} />
-        <CustomChips tag={'hero 💼'} backgroundColor={globalColors.blue} />
-      </View>
+      <View style={[styles.tags, {marginVertical: 10}]}>{displayTags()}</View>
 
       {/* Picture */}
       <TouchableOpacity
@@ -223,7 +284,7 @@ const NewTransaction: React.FC<{
           name="insert-photo"
           type={VectorIcons.MaterialIcons}
           props={{focused: false}}
-          size={30}
+          size={25}
           color={globalColors.cyan}
         />
         <CustomText extraStyles={styles.selected_text}>Add photo</CustomText>
@@ -294,7 +355,7 @@ const styles = StyleSheet.create({
   tags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginLeft: 65,
+    marginLeft: 60,
   },
   selected_text: {
     flex: 1,

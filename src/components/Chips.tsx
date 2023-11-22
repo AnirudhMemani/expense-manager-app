@@ -5,17 +5,31 @@ import {IChipsProps} from './types';
 import {TabIcon, VectorIcons} from '../navigations/TabIcon';
 import {globalColors} from '../utils/globalColors';
 
-export const CustomChips: React.FC<IChipsProps> = ({tag, backgroundColor}) => {
-  const [isSelected, setIsSelected] = useState<boolean>(false);
+export const CustomChips: React.FC<IChipsProps> = ({tag, setTag}) => {
+  const [toggleChip, setToggleChips] = useState<boolean>(
+    tag.isSelected ?? false,
+  );
+  const backgroundColor = globalColors.blue;
   return (
     <>
       <TouchableOpacity
         activeOpacity={1}
-        onPress={() => setIsSelected(prev => !prev)}
+        onPress={() => {
+          setToggleChips(prev => !prev);
+          setTag(previousValue => {
+            return previousValue.filter(value => {
+              if (!value.isDummy && value.id === tag.id) {
+                return false;
+              } else {
+                return true;
+              }
+            });
+          });
+        }}
         style={[
           styles.container,
           {
-            backgroundColor: isSelected
+            backgroundColor: toggleChip
               ? backgroundColor
               : globalColors.chip_bg,
           },
@@ -25,17 +39,17 @@ export const CustomChips: React.FC<IChipsProps> = ({tag, backgroundColor}) => {
           type={VectorIcons.Feather}
           size={15}
           props={{focused: false}}
-          color={isSelected ? backgroundColor : globalColors.black}
+          color={toggleChip ? backgroundColor : globalColors.black}
           extraStyles={[
             styles.icon,
             {
-              backgroundColor: isSelected
+              backgroundColor: toggleChip
                 ? globalColors.white
                 : globalColors.black,
             },
           ]}
         />
-        <CustomText extraStyles={styles.tag}>{tag}</CustomText>
+        <CustomText extraStyles={styles.tag}>{tag.tag}</CustomText>
       </TouchableOpacity>
     </>
   );

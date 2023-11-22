@@ -4,6 +4,7 @@ import {TCustomTextInputProps} from './types';
 import {globalStyles} from '../utils/globalStyles';
 import {globalColors} from '../utils/globalColors';
 import {APP_SETTINGS} from '../utils/app-settings';
+import {printLogs} from '../utils/log-utils';
 
 export const CustomInput: React.FC<TCustomTextInputProps> = ({
   reference,
@@ -18,6 +19,10 @@ export const CustomInput: React.FC<TCustomTextInputProps> = ({
   numberOfLines,
   setIsExceededCharLimit,
   defaultValue,
+  onChangeText,
+  onSubmitEditing,
+  onKeyPress,
+  value,
   extraStyles,
 }) => {
   const [inputText, setInputText] = useState<string | undefined>(defaultValue);
@@ -59,34 +64,40 @@ export const CustomInput: React.FC<TCustomTextInputProps> = ({
         placeholderTextColor={placeholderTintColor ?? globalColors.gray}
         autoFocus={autoFocus}
         maxFontSizeMultiplier={APP_SETTINGS.MAX_FONT_SIZE_MULTIPLIER}
-        onChangeText={text => {
-          const numericInput = text.replace(/^0+|[^0-9]/g, '');
-          if (maxLength) {
-            if (text.length > maxLength) {
-              setIsExceededCharLimit && setIsExceededCharLimit(true);
-              Keyboard.dismiss();
-            } else {
-              setIsExceededCharLimit && setIsExceededCharLimit(false);
-              keyboardType == 'numeric'
-                ? setInputText(numericInput)
-                : setInputText(text);
-            }
-          } else {
-            keyboardType == 'numeric'
-              ? setInputText(numericInput)
-              : setInputText(text);
-          }
-        }}
-        value={inputText}
+        onChangeText={
+          onChangeText
+            ? onChangeText
+            : text => {
+                const numericInput = text.replace(/^0+|[^0-9]/g, '');
+                if (maxLength) {
+                  if (text.length > maxLength) {
+                    setIsExceededCharLimit && setIsExceededCharLimit(true);
+                    Keyboard.dismiss();
+                  } else {
+                    setIsExceededCharLimit && setIsExceededCharLimit(false);
+                    keyboardType == 'numeric'
+                      ? setInputText(numericInput)
+                      : setInputText(text);
+                  }
+                } else {
+                  keyboardType == 'numeric'
+                    ? setInputText(numericInput)
+                    : setInputText(text);
+                }
+              }
+        }
+        value={value ?? inputText}
         onContentSizeChange={props => {
           if (props.nativeEvent.contentSize.height <= maxHeight) {
             setOccupiedLinesHeight(props.nativeEvent.contentSize.height);
           }
         }}
+        onSubmitEditing={onSubmitEditing}
         multiline={multiline}
         scrollEnabled={true}
         numberOfLines={numberOfLines}
         defaultValue={inputText}
+        onKeyPress={onKeyPress}
       />
     </>
   );

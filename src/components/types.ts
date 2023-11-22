@@ -1,6 +1,12 @@
 import {TextInput} from 'react-native';
-import {LegacyRef} from 'react';
-import {TextStyle, ViewStyle} from 'react-native/types';
+import {LegacyRef, SetStateAction} from 'react';
+import {
+  TextStyle,
+  ViewStyle,
+  TextInputSubmitEditingEventData,
+  NativeSyntheticEvent,
+  TextInputKeyPressEventData,
+} from 'react-native/types';
 import {StyleProp} from 'react-native/types';
 
 export type CustomTextProps = {
@@ -37,6 +43,12 @@ export type TCustomTextInputProps = {
   numberOfLines?: number;
   setIsExceededCharLimit?: React.Dispatch<React.SetStateAction<boolean>>;
   defaultValue?: string;
+  onChangeText?: (text: string) => void;
+  onSubmitEditing?: (
+    e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
+  ) => void;
+  onKeyPress?: (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => void;
+  value?: string;
   keyboardType?:
     | 'default'
     | 'numeric'
@@ -66,6 +78,13 @@ export type TCustomTextInputProps = {
 };
 
 export interface IChipsProps {
+  tag: ITagProps;
+  setTag: React.Dispatch<React.SetStateAction<ITagProps[]>>;
+}
+
+export interface ITagProps {
+  id: any;
   tag: string;
-  backgroundColor: string;
+  isSelected?: boolean;
+  isDummy?: boolean;
 }
