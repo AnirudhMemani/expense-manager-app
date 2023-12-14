@@ -5,6 +5,8 @@ export enum STACK_SCREENS {
   EXPENSE = 'Expense',
   INCOME = 'Income',
   TRANSFER = 'Transfer',
+  OPEN_CAMERA = 'OpenCamera',
+  SHOW_PHOTO = 'ShowPhoto',
 }
 
 export enum BOTTOM_NAV_SCREENS {

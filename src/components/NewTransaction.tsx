@@ -4,9 +4,10 @@ import {
   View,
   ScrollView,
   TouchableHighlight,
-  Keyboard,
+  Linking,
 } from 'react-native';
 import React, {useState} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import {globalStyles} from '../utils/globalStyles';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {CustomText} from '../components/CustomText';
@@ -20,10 +21,16 @@ import {useGlobalContext} from './ContextProvider';
 import {ErrorMsg} from './ErrorMsg';
 import {CustomChips} from './Chips';
 import {ITagProps} from './types';
+import {printLogs} from '../utils/log-utils';
+import {Camera} from 'react-native-vision-camera';
+import {AlertWithOneActionableOption} from '../utils/alert-utils';
+import {STACK_SCREENS} from '../navigations/constants';
+import {launchCamera} from 'react-native-image-picker';
 
-const NewTransaction: React.FC<{
+export const NewTransaction: React.FC<{
   navigation: NativeStackNavigationProp<any, any>;
 }> = ({navigation}) => {
+  // <-- useStates -->
   const [visible, setVisible] = useState<boolean>(false);
   const [date, setDate] = useState<string>(
     dateFormatter(new Date(), 'numeric'),
@@ -61,8 +68,18 @@ const NewTransaction: React.FC<{
     },
   ]);
 
+  // <-- useFocusEffect -->
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     openCamera && navigation.navigate(STACK_SCREENS.SHOW_CAMERA);
+  //     return () => setOpenCamera(false);
+  //   }, [openCamera]),
+  // );
+
+  // <-- useContext -->
   const {commonMargin} = useGlobalContext();
 
+  // <-- tags -->
   const displayTags = () => {
     return tag.map(individualTag => {
       if (individualTag.isSelected || individualTag.isDummy) {
@@ -99,6 +116,53 @@ const NewTransaction: React.FC<{
     }
   };
 
+  // <-- Camera -->
+  const openBackCamera = async () => {
+    const hasCameraPermission = await Camera.getCameraPermissionStatus();
+    printLogs('Permission to open camera:', hasCameraPermission);
+    if (hasCameraPermission === 'not-determined') {
+      const grantCameraPermission = await Camera.requestCameraPermission();
+      printLogs('Did user give camera permission:', grantCameraPermission);
+      grantCameraPermission === 'authorized' &&
+        // navigation.navigate(STACK_SCREENS.OPEN_CAMERA);
+        (await launchCamera(
+          {
+            mediaType: 'photo',
+            cameraType: 'back',
+            quality: 1,
+          },
+          imageObject => {
+            printLogs('Image Object', imageObject);
+          },
+        ));
+    } else if (hasCameraPermission === 'authorized') {
+      // navigation.navigate(STACK_SCREENS.OPEN_CAMERA);
+      await launchCamera(
+        {
+          mediaType: 'photo',
+          cameraType: 'back',
+          quality: 1,
+        },
+        imageObject => {
+          printLogs('Image Object', imageObject);
+        },
+      );
+    } else if (hasCameraPermission === 'denied') {
+      AlertWithOneActionableOption(
+        'Permission Denied',
+        'Please provide permission to open the camera in app settings!',
+        'Open settings',
+        true,
+        openSettings => {
+          if (openSettings) {
+            Linking.openSettings();
+          }
+        },
+      );
+    }
+  };
+
+  // <-- Activity -->
   return (
     <ScrollView
       style={globalStyles.container}
@@ -279,7 +343,8 @@ const NewTransaction: React.FC<{
       {/* Picture */}
       <TouchableOpacity
         activeOpacity={1}
-        style={[styles.input_container, {marginVertical: 10}]}>
+        style={[styles.input_container, {marginVertical: 10}]}
+        onPress={openBackCamera}>
         <TabIcon
           name="insert-photo"
           type={VectorIcons.MaterialIcons}
@@ -316,6 +381,7 @@ const NewTransaction: React.FC<{
   );
 };
 
+// <-- Styles -->
 const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
@@ -363,5 +429,3 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
-
-export default NewTransaction;
