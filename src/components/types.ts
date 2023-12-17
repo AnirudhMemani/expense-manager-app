@@ -88,3 +88,9 @@ export interface ITagProps {
   isSelected?: boolean;
   isDummy?: boolean;
 }
+
+export interface IPhotoOptionsModalProps {
+  onPressOptionOne: () => void;
+  onPressOptionTwo: () => void;
+  closeModal: () => void;
+}

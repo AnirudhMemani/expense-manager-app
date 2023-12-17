@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, {Children} from 'react';
+import React from 'react';
 import {CustomTextProps} from './types';
 import {APP_SETTINGS} from '../utils/app-settings';
 

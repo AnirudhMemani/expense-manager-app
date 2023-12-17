@@ -14,7 +14,7 @@ export class EncryptedStorageUtils {
           ENCRYPTED_STORAGE_KEYS.SIGNRESPONSE,
           JSON.stringify(value),
         );
-        printLogs(TAG, '| successful:', value);
+        printLogs(TAG, '| successful:', value.user);
         return true;
       }
       printLogs(TAG, '| unsuccessful because Response was empty:', value);

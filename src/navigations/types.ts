@@ -5,10 +5,6 @@ export type RootStackNavigationProps = {
   Expense: undefined;
   Income: undefined;
   Transfer: undefined;
-  OpenCamera: undefined;
-  ShowPhoto: {
-    imageUri: string;
-  };
 };
 
 export type TBottomTabNavigationProps = {

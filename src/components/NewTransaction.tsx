@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableHighlight,
   Linking,
+  Image,
 } from 'react-native';
 import React, {useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
@@ -24,8 +25,9 @@ import {ITagProps} from './types';
 import {printLogs} from '../utils/log-utils';
 import {Camera} from 'react-native-vision-camera';
 import {AlertWithOneActionableOption} from '../utils/alert-utils';
-import {STACK_SCREENS} from '../navigations/constants';
 import {launchCamera} from 'react-native-image-picker';
+import {PhotoOptionsModal} from './PhotoOptionsModal';
+import {PHOTO_BUTTON_ICON, PHOTO_BUTTON_TTILE} from './constants';
 
 export const NewTransaction: React.FC<{
   navigation: NativeStackNavigationProp<any, any>;
@@ -40,6 +42,9 @@ export const NewTransaction: React.FC<{
   const [isExceededCharLimit, setIsExceededCharLimit] = useState(false);
   const [isExceededNumericLimit, setIsExceededNumericLimit] = useState(false);
   const [tagsInputText, setTagsInputText] = useState<string>();
+  const [isPhotoOptionsVisible, setIsPhotoOptionsVisible] =
+    useState<boolean>(false);
+  const [displayImageUri, setDisplayImageUri] = useState<string>();
   const [tag, setTags] = useState<ITagProps[]>([
     {
       id: 1,
@@ -67,14 +72,6 @@ export const NewTransaction: React.FC<{
       isDummy: true,
     },
   ]);
-
-  // <-- useFocusEffect -->
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     openCamera && navigation.navigate(STACK_SCREENS.SHOW_CAMERA);
-  //     return () => setOpenCamera(false);
-  //   }, [openCamera]),
-  // );
 
   // <-- useContext -->
   const {commonMargin} = useGlobalContext();
@@ -123,20 +120,22 @@ export const NewTransaction: React.FC<{
     if (hasCameraPermission === 'not-determined') {
       const grantCameraPermission = await Camera.requestCameraPermission();
       printLogs('Did user give camera permission:', grantCameraPermission);
-      grantCameraPermission === 'authorized' &&
-        // navigation.navigate(STACK_SCREENS.OPEN_CAMERA);
-        (await launchCamera(
+      if (grantCameraPermission === 'authorized') {
+        setIsPhotoOptionsVisible(false);
+        return await launchCamera(
           {
             mediaType: 'photo',
             cameraType: 'back',
             quality: 1,
           },
           imageObject => {
-            printLogs('Image Object', imageObject);
+            printLogs('Image Object', imageObject.assets?.[0].uri);
+            setDisplayImageUri(imageObject.assets?.[0].uri);
           },
-        ));
+        );
+      }
     } else if (hasCameraPermission === 'authorized') {
-      // navigation.navigate(STACK_SCREENS.OPEN_CAMERA);
+      setIsPhotoOptionsVisible(false);
       await launchCamera(
         {
           mediaType: 'photo',
@@ -144,13 +143,14 @@ export const NewTransaction: React.FC<{
           quality: 1,
         },
         imageObject => {
-          printLogs('Image Object', imageObject);
+          printLogs('Image Object', imageObject.assets?.[0].uri);
+          setDisplayImageUri(imageObject.assets?.[0].uri);
         },
       );
     } else if (hasCameraPermission === 'denied') {
       AlertWithOneActionableOption(
         'Permission Denied',
-        'Please provide permission to open the camera in app settings!',
+        "Please provide permission to open the camera in the app' settings!",
         'Open settings',
         true,
         openSettings => {
@@ -342,9 +342,11 @@ export const NewTransaction: React.FC<{
 
       {/* Picture */}
       <TouchableOpacity
-        activeOpacity={1}
+        activeOpacity={0.5}
         style={[styles.input_container, {marginVertical: 10}]}
-        onPress={openBackCamera}>
+        onPress={() => {
+          setIsPhotoOptionsVisible(true);
+        }}>
         <TabIcon
           name="insert-photo"
           type={VectorIcons.MaterialIcons}
@@ -352,15 +354,41 @@ export const NewTransaction: React.FC<{
           size={25}
           color={globalColors.cyan}
         />
-        <CustomText extraStyles={styles.selected_text}>Add photo</CustomText>
-        <TabIcon
-          name="chevron-small-right"
-          type={VectorIcons.Entypo}
-          props={{focused: false}}
-          size={25}
-          color={globalColors.inherit_lighter}
-        />
+        <CustomText extraStyles={styles.selected_text}>
+          {displayImageUri
+            ? PHOTO_BUTTON_TTILE.REPLACE_PHOTOS
+            : PHOTO_BUTTON_TTILE.ADD_PHOTOS}
+        </CustomText>
+        <TouchableOpacity
+          onPress={() => setDisplayImageUri(undefined)}
+          activeOpacity={0.5}>
+          <TabIcon
+            name={
+              displayImageUri
+                ? PHOTO_BUTTON_ICON.CLOSE
+                : PHOTO_BUTTON_ICON.CHEVRON
+            }
+            type={displayImageUri ? VectorIcons.AntDesign : VectorIcons.Entypo}
+            props={{focused: false}}
+            size={displayImageUri ? 20 : 25}
+            color={globalColors.inherit_lighter}
+          />
+        </TouchableOpacity>
       </TouchableOpacity>
+
+      {isPhotoOptionsVisible && (
+        <PhotoOptionsModal
+          onPressOptionOne={openBackCamera}
+          onPressOptionTwo={openBackCamera}
+          closeModal={() => setIsPhotoOptionsVisible(false)}
+        />
+      )}
+
+      {displayImageUri && (
+        <View style={styles.display_image_container}>
+          <Image source={{uri: displayImageUri}} style={styles.display_image} />
+        </View>
+      )}
 
       {/* Date Picker Modal */}
       <DatePickerModal
@@ -427,5 +455,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 30,
     fontSize: 18,
+  },
+  display_image_container: {
+    ...globalStyles.alignCenter,
+    marginLeft: 65,
+    marginRight: 20,
+  },
+  display_image: {
+    height: 150,
+    width: '100%',
   },
 });

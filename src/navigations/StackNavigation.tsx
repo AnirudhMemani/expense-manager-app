@@ -29,8 +29,6 @@ const StackNavigation = () => {
       <Stack.Screen name={STACK_SCREENS.EXPENSE} component={Expense} />
       <Stack.Screen name={STACK_SCREENS.INCOME} component={Income} />
       <Stack.Screen name={STACK_SCREENS.TRANSFER} component={Transfer} />
-      <Stack.Screen name={STACK_SCREENS.OPEN_CAMERA} component={ShowCamera} />
-      <Stack.Screen name={STACK_SCREENS.SHOW_PHOTO} component={ShowPhoto} />
     </Stack.Navigator>
   );
 };
