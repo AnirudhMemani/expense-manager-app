@@ -12,10 +12,12 @@ import {
   REHYDRATE,
   persistStore,
 } from 'redux-persist';
+import transactionSlice from './reducers/transaction-slice';
 
 const reducers = combineReducers({
   login: loginSlice,
   income: incomeSlice,
+  transaction: transactionSlice,
 });
 
 const persistConfig = {

@@ -18,8 +18,8 @@ const initialState: ILoginSliceProps = {
   },
 };
 
-const incomeSlice = createSlice({
-  name: 'income',
+const LoginSlice = createSlice({
+  name: 'Login',
   initialState,
   reducers: {
     setSigninResp: (state, action: PayloadAction<TSigninResProps>) => {
@@ -28,5 +28,5 @@ const incomeSlice = createSlice({
   },
 });
 
-export const {setSigninResp} = incomeSlice.actions;
-export default incomeSlice.reducer;
+export const {setSigninResp} = LoginSlice.actions;
+export default LoginSlice.reducer;

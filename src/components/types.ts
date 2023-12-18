@@ -79,7 +79,7 @@ export type TCustomTextInputProps = {
 
 export interface IChipsProps {
   tag: ITagProps;
-  setTag: React.Dispatch<React.SetStateAction<ITagProps[]>>;
+  // setTag: React.Dispatch<React.SetStateAction<ITagProps[]>>;
 }
 
 export interface ITagProps {
@@ -92,5 +92,6 @@ export interface ITagProps {
 export interface IPhotoOptionsModalProps {
   onPressOptionOne: () => void;
   onPressOptionTwo: () => void;
-  closeModal: () => void;
+  setIsPhotoOptionsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  isPhotoOptionsVisible: boolean;
 }

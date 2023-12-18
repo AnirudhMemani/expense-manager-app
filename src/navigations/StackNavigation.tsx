@@ -8,8 +8,7 @@ import BottomNavigation from './BottomNavigation';
 import Expense from '../screens/AddTransaction/Expense';
 import Income from '../screens/AddTransaction/Income';
 import Transfer from '../screens/AddTransaction/Transfer';
-import {ShowCamera} from '../components/ShowCamera';
-import {ShowPhoto} from '../components/ShowPhoto';
+import {DisplayPhoto} from '../components/DisplayPhoto';
 
 const Stack = createNativeStackNavigator<RootStackNavigationProps>();
 
@@ -29,6 +28,10 @@ const StackNavigation = () => {
       <Stack.Screen name={STACK_SCREENS.EXPENSE} component={Expense} />
       <Stack.Screen name={STACK_SCREENS.INCOME} component={Income} />
       <Stack.Screen name={STACK_SCREENS.TRANSFER} component={Transfer} />
+      <Stack.Screen
+        name={STACK_SCREENS.DISPLAY_PHOTO}
+        component={DisplayPhoto}
+      />
     </Stack.Navigator>
   );
 };

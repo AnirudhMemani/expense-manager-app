@@ -4,8 +4,12 @@ import {CustomText} from './CustomText';
 import {IChipsProps} from './types';
 import {TabIcon, VectorIcons} from '../navigations/TabIcon';
 import {globalColors} from '../utils/globalColors';
+import {useAppDispatch, useAppSelector} from '../redux/hooks';
+import {setTags} from '../redux/reducers/transaction-slice';
 
-export const CustomChips: React.FC<IChipsProps> = ({tag, setTag}) => {
+export const CustomChips: React.FC<IChipsProps> = ({tag}) => {
+  const dispatch = useAppDispatch();
+  const previousValue = useAppSelector(state => state.transaction.tags);
   const [toggleChip, setToggleChips] = useState<boolean>(
     tag.isSelected ?? false,
   );
@@ -16,15 +20,14 @@ export const CustomChips: React.FC<IChipsProps> = ({tag, setTag}) => {
         activeOpacity={1}
         onPress={() => {
           setToggleChips(prev => !prev);
-          setTag(previousValue => {
-            return previousValue.filter(value => {
-              if (!value.isDummy && value.id === tag.id) {
-                return false;
-              } else {
-                return true;
-              }
-            });
+          const newTagsList = previousValue.filter(value => {
+            if (!value.isDummy && value.id === tag.id) {
+              return false;
+            } else {
+              return true;
+            }
           });
+          dispatch(setTags(newTagsList));
         }}
         style={[
           styles.container,

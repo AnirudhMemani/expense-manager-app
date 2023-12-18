@@ -3,12 +3,12 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
-  TouchableHighlight,
+  PermissionsAndroid,
   Linking,
+  TouchableHighlight,
   Image,
 } from 'react-native';
 import React, {useState} from 'react';
-import {useFocusEffect} from '@react-navigation/native';
 import {globalStyles} from '../utils/globalStyles';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {CustomText} from '../components/CustomText';
@@ -25,9 +25,12 @@ import {ITagProps} from './types';
 import {printLogs} from '../utils/log-utils';
 import {Camera} from 'react-native-vision-camera';
 import {AlertWithOneActionableOption} from '../utils/alert-utils';
-import {launchCamera} from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {PhotoOptionsModal} from './PhotoOptionsModal';
 import {PHOTO_BUTTON_ICON, PHOTO_BUTTON_TTILE} from './constants';
+import {STACK_SCREENS} from '../navigations/constants';
+import {useAppDispatch, useAppSelector} from '../redux/hooks';
+import {setDisplayImageUri, setTags} from '../redux/reducers/transaction-slice';
 
 export const NewTransaction: React.FC<{
   navigation: NativeStackNavigationProp<any, any>;
@@ -44,34 +47,13 @@ export const NewTransaction: React.FC<{
   const [tagsInputText, setTagsInputText] = useState<string>();
   const [isPhotoOptionsVisible, setIsPhotoOptionsVisible] =
     useState<boolean>(false);
-  const [displayImageUri, setDisplayImageUri] = useState<string>();
-  const [tag, setTags] = useState<ITagProps[]>([
-    {
-      id: 1,
-      tag: 'online🛒',
-      isDummy: true,
-    },
-    {
-      id: 2,
-      tag: 'vacation🌳',
-      isDummy: true,
-    },
-    {
-      id: 3,
-      tag: 'sports⚽',
-      isDummy: true,
-    },
-    {
-      id: 4,
-      tag: 'business💰',
-      isDummy: true,
-    },
-    {
-      id: 5,
-      tag: 'groceries🧋',
-      isDummy: true,
-    },
-  ]);
+  // const [displayImageUri, setDisplayImageUri] = useState<string>();
+  // const [tag, setTags] = useState<ITagProps[]>([]);
+  const dispatch = useAppDispatch();
+  const displayImageUri = useAppSelector(
+    state => state.transaction.displayImageUri,
+  );
+  const tag = useAppSelector(state => state.transaction.tags);
 
   // <-- useContext -->
   const {commonMargin} = useGlobalContext();
@@ -80,13 +62,7 @@ export const NewTransaction: React.FC<{
   const displayTags = () => {
     return tag.map(individualTag => {
       if (individualTag.isSelected || individualTag.isDummy) {
-        return (
-          <CustomChips
-            key={individualTag.id}
-            tag={individualTag}
-            setTag={setTags}
-          />
-        );
+        return <CustomChips key={individualTag.id} tag={individualTag} />;
       }
     });
   };
@@ -97,10 +73,12 @@ export const NewTransaction: React.FC<{
       existingTags => existingTags.tag === tagsInputText,
     );
     if (!tagExists) {
-      setTags([
-        ...tag,
-        {id: tag.length + 1, tag: tagsInputText, isSelected: true},
-      ]);
+      dispatch(
+        setTags([
+          ...tag,
+          {id: tagsInputText, tag: tagsInputText, isSelected: true},
+        ]),
+      );
     }
     setTagsInputText('');
   };
@@ -122,31 +100,38 @@ export const NewTransaction: React.FC<{
       printLogs('Did user give camera permission:', grantCameraPermission);
       if (grantCameraPermission === 'authorized') {
         setIsPhotoOptionsVisible(false);
-        return await launchCamera(
+        try {
+          return await launchCamera(
+            {
+              mediaType: 'photo',
+              cameraType: 'back',
+              quality: 1,
+              saveToPhotos: true,
+            },
+            imageObject => {
+              dispatch(setDisplayImageUri(imageObject.assets?.[0].uri));
+            },
+          );
+        } catch (error) {
+          printLogs('launchCamera() error:', error);
+        }
+      }
+    } else if (hasCameraPermission === 'authorized') {
+      setIsPhotoOptionsVisible(false);
+      try {
+        await launchCamera(
           {
             mediaType: 'photo',
             cameraType: 'back',
             quality: 1,
           },
           imageObject => {
-            printLogs('Image Object', imageObject.assets?.[0].uri);
-            setDisplayImageUri(imageObject.assets?.[0].uri);
+            dispatch(setDisplayImageUri(imageObject.assets?.[0].uri));
           },
         );
+      } catch (error) {
+        printLogs('launchCamera() error:', error);
       }
-    } else if (hasCameraPermission === 'authorized') {
-      setIsPhotoOptionsVisible(false);
-      await launchCamera(
-        {
-          mediaType: 'photo',
-          cameraType: 'back',
-          quality: 1,
-        },
-        imageObject => {
-          printLogs('Image Object', imageObject.assets?.[0].uri);
-          setDisplayImageUri(imageObject.assets?.[0].uri);
-        },
-      );
     } else if (hasCameraPermission === 'denied') {
       AlertWithOneActionableOption(
         'Permission Denied',
@@ -159,6 +144,18 @@ export const NewTransaction: React.FC<{
           }
         },
       );
+    }
+  };
+
+  const openPhotoGallery = async () => {
+    try {
+      const selectedPhoto = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 1,
+      });
+      dispatch(setDisplayImageUri(selectedPhoto.assets?.[0].uri));
+    } catch (error) {
+      printLogs('launchImageLibrary() error:', error);
     }
   };
 
@@ -360,7 +357,7 @@ export const NewTransaction: React.FC<{
             : PHOTO_BUTTON_TTILE.ADD_PHOTOS}
         </CustomText>
         <TouchableOpacity
-          onPress={() => setDisplayImageUri(undefined)}
+          onPress={() => dispatch(setDisplayImageUri(undefined))}
           activeOpacity={0.5}>
           <TabIcon
             name={
@@ -379,14 +376,23 @@ export const NewTransaction: React.FC<{
       {isPhotoOptionsVisible && (
         <PhotoOptionsModal
           onPressOptionOne={openBackCamera}
-          onPressOptionTwo={openBackCamera}
-          closeModal={() => setIsPhotoOptionsVisible(false)}
+          onPressOptionTwo={openPhotoGallery}
+          isPhotoOptionsVisible={isPhotoOptionsVisible}
+          setIsPhotoOptionsVisible={setIsPhotoOptionsVisible}
         />
       )}
 
       {displayImageUri && (
         <View style={styles.display_image_container}>
-          <Image source={{uri: displayImageUri}} style={styles.display_image} />
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => navigation.navigate(STACK_SCREENS.DISPLAY_PHOTO)}
+            style={styles.display_image_button}>
+            <Image
+              source={{uri: displayImageUri}}
+              style={styles.display_image}
+            />
+          </TouchableOpacity>
         </View>
       )}
 
@@ -461,8 +467,12 @@ const styles = StyleSheet.create({
     marginLeft: 65,
     marginRight: 20,
   },
-  display_image: {
+  display_image_button: {
     height: 150,
+    width: '100%',
+  },
+  display_image: {
+    height: '100%',
     width: '100%',
   },
 });
