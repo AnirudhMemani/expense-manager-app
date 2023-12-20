@@ -3,7 +3,6 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
-  PermissionsAndroid,
   Linking,
   TouchableHighlight,
   Image,
@@ -31,6 +30,7 @@ import {PHOTO_BUTTON_ICON, PHOTO_BUTTON_TTILE} from './constants';
 import {STACK_SCREENS} from '../navigations/constants';
 import {useAppDispatch, useAppSelector} from '../redux/hooks';
 import {setDisplayImageUri, setTags} from '../redux/reducers/transaction-slice';
+import {TabButton} from './TabButton';
 
 export const NewTransaction: React.FC<{
   navigation: NativeStackNavigationProp<any, any>;
@@ -47,8 +47,6 @@ export const NewTransaction: React.FC<{
   const [tagsInputText, setTagsInputText] = useState<string>();
   const [isPhotoOptionsVisible, setIsPhotoOptionsVisible] =
     useState<boolean>(false);
-  // const [displayImageUri, setDisplayImageUri] = useState<string>();
-  // const [tag, setTags] = useState<ITagProps[]>([]);
   const dispatch = useAppDispatch();
   const displayImageUri = useAppSelector(
     state => state.transaction.displayImageUri,
@@ -163,20 +161,8 @@ export const NewTransaction: React.FC<{
   return (
     <ScrollView
       style={globalStyles.container}
-      keyboardShouldPersistTaps={'handled'}>
-      {/* Tab Bar */}
-      <View style={styles.tabBar}>
-        <TouchableOpacity>
-          <CustomText>Expense</CustomText>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <CustomText>Income</CustomText>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <CustomText>Transfer</CustomText>
-        </TouchableOpacity>
-      </View>
-
+      keyboardShouldPersistTaps={'handled'}
+      showsVerticalScrollIndicator={false}>
       {/* Date picker button */}
       <TouchableOpacity
         onPress={() => setVisible(true)}
@@ -210,6 +196,7 @@ export const NewTransaction: React.FC<{
             returnKeyType={'done'}
             setIsExceededCharLimit={setIsExceededNumericLimit}
             defaultValue={'0'}
+            extraStyles={{color: globalColors.white}}
           />
           <TabIcon
             name="calculator"
@@ -325,7 +312,7 @@ export const NewTransaction: React.FC<{
           placeholder="Add tags"
           autoFocus={false}
           placeholderTintColor={globalColors.inherit}
-          extraStyles={{fontSize: 16}}
+          extraStyles={{fontSize: 16, color: globalColors.white}}
           maxLength={25}
           multiline={false}
           numberOfLines={1}
@@ -417,15 +404,6 @@ export const NewTransaction: React.FC<{
 
 // <-- Styles -->
 const styles = StyleSheet.create({
-  tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: globalColors.tab_bg,
-    borderRadius: 10,
-    marginVertical: 20,
-    padding: 7,
-  },
   date: {
     flexDirection: 'row',
     padding: 15,

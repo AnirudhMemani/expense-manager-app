@@ -6,21 +6,14 @@ import {CustomText} from '../../components/CustomText';
 import {RootStackNavigationProps} from '../../navigations/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {globalColors} from '../../utils/globalColors';
+import {NewTransaction} from '../../components/NewTransaction';
 
 const Income: React.FC<{
-  navigation: NativeStackNavigationProp<
-    RootStackNavigationProps,
-    STACK_SCREENS.EXPENSE
-  >;
+  navigation: NativeStackNavigationProp<any, any>;
 }> = ({navigation}) => {
   return (
     <View style={[globalStyles.container, globalStyles.alignCenter]}>
-      <Text>Income</Text>
-      <TouchableOpacity
-        onPress={() => navigation.navigate(STACK_SCREENS.EXPENSE)}
-        style={styles.date}>
-        <CustomText>Back Button visible</CustomText>
-      </TouchableOpacity>
+      <NewTransaction navigation={navigation} />
     </View>
   );
 };

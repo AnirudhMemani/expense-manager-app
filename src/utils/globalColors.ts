@@ -20,4 +20,5 @@ export const globalColors = {
   inherit_lighter: 'rgba(248, 248, 255, 0.9)',
   chip_bg: '#222126',
   semi_transparent: 'rgba(0, 0, 0, 0.5)',
+  header_blue: '#1f4e80',
 };

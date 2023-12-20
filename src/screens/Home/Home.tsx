@@ -45,8 +45,8 @@ const Home: React.FC<{
   const dateObject = new Date();
   const hours = dateObject.getHours();
   const localeDate = dateFormatter(dateObject);
-  const name = user.name;
-  const pfp = user.photo ?? anonymouse_pfp;
+  const name = user.name ?? 'Anonymous';
+  const pfp = user.photo ? user.photo : anonymouse_pfp;
   const balance = '20,000';
   const dummyData = [
     {
@@ -107,7 +107,7 @@ const Home: React.FC<{
         true,
         async executeAction => {
           if (executeAction) {
-            await logoutAndNavigateToLogin(navigation);
+            await logoutAndNavigateToLogin(navigation, dispatch);
           }
         },
       );
@@ -186,11 +186,11 @@ const Home: React.FC<{
           </TouchableWithoutFeedback>
         </View>
         <Transactions data={dummyData} isScrollable={false} />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={testFireStore}
           style={[styles.balance_floater, {marginVertical: 20}]}>
           <CustomText>Call FireStore</CustomText>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           onPress={logout}
           style={[styles.balance_floater, {marginVertical: 20}]}>

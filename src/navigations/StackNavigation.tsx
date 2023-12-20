@@ -9,6 +9,8 @@ import Expense from '../screens/AddTransaction/Expense';
 import Income from '../screens/AddTransaction/Income';
 import Transfer from '../screens/AddTransaction/Transfer';
 import {DisplayPhoto} from '../components/DisplayPhoto';
+import TopNavigation from './TopNavigation';
+import {globalColors} from '../utils/globalColors';
 
 const Stack = createNativeStackNavigator<RootStackNavigationProps>();
 
@@ -25,12 +27,21 @@ const StackNavigation = () => {
         name={STACK_SCREENS.BOTTOM_NAVIGATION}
         component={BottomNavigation}
       />
-      <Stack.Screen name={STACK_SCREENS.EXPENSE} component={Expense} />
-      <Stack.Screen name={STACK_SCREENS.INCOME} component={Income} />
-      <Stack.Screen name={STACK_SCREENS.TRANSFER} component={Transfer} />
       <Stack.Screen
         name={STACK_SCREENS.DISPLAY_PHOTO}
         component={DisplayPhoto}
+      />
+      <Stack.Screen
+        name={STACK_SCREENS.ADD_TRANSACTIONS}
+        component={TopNavigation}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: globalColors.header_blue,
+          },
+          headerTintColor: globalColors.white,
+          headerTitle: 'Add transaction',
+        }}
       />
     </Stack.Navigator>
   );

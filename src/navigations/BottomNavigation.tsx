@@ -11,6 +11,7 @@ import {TabIcon, VectorIcons} from './TabIcon';
 import TopNavigation from './TopNavigation';
 import BTabButton from '../screens/AddTransaction/BTabButton';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import AddTransaction from './AddTransactionStackNavigation';
 
 const BottomNavigation: React.FC<{
   navigation: NativeStackNavigationProp<any, any>;
@@ -57,8 +58,8 @@ const BottomNavigation: React.FC<{
         }}
       />
       <BottomTab.Screen
-        name={BOTTOM_NAV_SCREENS.ADD_TRANSACTIONS}
-        component={TopNavigation}
+        name={BOTTOM_NAV_SCREENS.TOP_NAVIGATION}
+        component={AddTransaction}
         options={{
           tabBarIcon: props => (
             <TabIcon

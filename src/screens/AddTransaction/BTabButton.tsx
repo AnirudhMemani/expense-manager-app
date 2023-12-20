@@ -5,7 +5,7 @@ import {
   BottomTabBarButtonProps,
   BottomTabNavigationProp,
 } from '@react-navigation/bottom-tabs';
-import {STACK_SCREENS} from '../../navigations/constants';
+import {BOTTOM_NAV_SCREENS, STACK_SCREENS} from '../../navigations/constants';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const BTabButton = (
@@ -16,7 +16,7 @@ const BTabButton = (
   return (
     <Pressable
       style={styles.container}
-      onPress={() => navigation.navigate(STACK_SCREENS.EXPENSE)}>
+      onPress={() => navigation.navigate(STACK_SCREENS.ADD_TRANSACTIONS)}>
       <View style={styles.button}>{children}</View>
     </Pressable>
   );

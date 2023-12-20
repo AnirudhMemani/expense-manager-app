@@ -3,6 +3,7 @@ import React from 'react';
 import {ActivityIndicator} from 'react-native-paper';
 import {globalStyles} from '../utils/globalStyles';
 import {useAppSelector} from '../redux/hooks';
+import {globalColors} from '../utils/globalColors';
 
 export const Loader = () => {
   const active = useAppSelector(state => state.income.loader);
@@ -14,7 +15,7 @@ export const Loader = () => {
             globalStyles.container,
             globalStyles.absoluteStyle,
             globalStyles.alignCenter,
-            {backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 5},
+            {backgroundColor: globalColors.semi_transparent, zIndex: 5},
           ]}>
           <ActivityIndicator />
         </View>
@@ -30,7 +31,7 @@ export const testLoader = () => {
         globalStyles.container,
         globalStyles.absoluteStyle,
         globalStyles.alignCenter,
-        {backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 5},
+        {backgroundColor: globalColors.semi_transparent, zIndex: 5},
       ]}>
       <ActivityIndicator />
     </View>

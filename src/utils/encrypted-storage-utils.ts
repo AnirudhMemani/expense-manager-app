@@ -34,7 +34,7 @@ export class EncryptedStorageUtils {
       const signinResponse: TSigninResProps = response
         ? JSON.parse(response)
         : COMMON_MSG.EMPTY;
-      printLogs(TAG, '| successful | Response:', signinResponse);
+      printLogs(TAG, '| successful | Response:', signinResponse.user);
       return signinResponse;
     } catch (error) {
       printLogs(TAG, '| unsuccessful | Error:', error);
@@ -51,7 +51,7 @@ export class EncryptedStorageUtils {
       const token = signinRes
         ? JSON.parse(signinRes).idToken
         : COMMON_MSG.EMPTY;
-      printLogs(TAG, '| successful | Token:', token);
+      // printLogs(TAG, '| successful | Token:', token);
       return token;
     } catch (error) {
       printLogs(TAG, '| unsuccessful | Error:', error);

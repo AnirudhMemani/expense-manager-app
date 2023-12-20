@@ -5,6 +5,9 @@ import {EncryptedStorageUtils} from './encrypted-storage-utils';
 import {printLogs} from './log-utils';
 import auth from '@react-native-firebase/auth';
 import {CalendarDate} from 'react-native-paper-dates/lib/typescript/Date/Calendar';
+import {ThunkDispatch} from '@reduxjs/toolkit';
+import {setSigninResp} from '../redux/reducers/login-slice';
+import {ThunkActionDispatch} from 'redux-thunk';
 
 export enum COMMON_MSG {
   YES = 'Yes',
@@ -26,10 +29,12 @@ export enum ERROR_MESSAGE {
 
 export const logoutAndNavigateToLogin = async (
   navigation: NativeStackNavigationProp<any, any>,
+  dispatch: ThunkDispatch<any, any, any>,
 ) => {
   const TAG = logoutAndNavigateToLogin.name;
   try {
     await EncryptedStorageUtils.clearEncryptedStorage();
+    clearReduxStore(dispatch);
     await GoogleSignin.signOut();
     await auth().signOut();
     printLogs(TAG, '| successful');
@@ -39,6 +44,8 @@ export const logoutAndNavigateToLogin = async (
     });
   } catch (error) {
     printLogs('There was an error while trying to ' + TAG + ':', error);
+    await EncryptedStorageUtils.clearEncryptedStorage();
+    clearReduxStore(dispatch);
     navigation.reset({
       index: 0,
       routes: [{name: STACK_SCREENS.LOGIN}],
@@ -59,4 +66,22 @@ export const dateFormatter = (
     year: yearFormatType ?? '2-digit',
   });
   return formater.format(date);
+};
+
+export const clearReduxStore = (dispatch: ThunkDispatch<any, any, any>) => {
+  dispatch(
+    setSigninResp({
+      idToken: '',
+      serverAuthCode: '',
+      scopes: [],
+      user: {
+        email: '',
+        familyName: '',
+        givenName: '',
+        id: '',
+        name: '',
+        photo: '',
+      },
+    }),
+  );
 };
