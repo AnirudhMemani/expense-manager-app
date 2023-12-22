@@ -8,8 +8,3 @@ export interface IIncomeSliceProps {
 export interface ILoginSliceProps {
   userInfo: TSigninResProps;
 }
-
-export interface ITransactionProps {
-  displayImageUri: string | undefined;
-  tags: ITagProps[];
-}

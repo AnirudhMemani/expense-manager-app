@@ -14,6 +14,9 @@ const TopNavigation = () => {
   return (
     <TOP_TAB.Navigator
       initialRouteName={TOP_NAV_SCREENS.EXPENSE}
+      screenOptions={{
+        animationEnabled: false,
+      }}
       tabBar={props => <TabBar {...props} />}>
       <TOP_TAB.Screen name={TOP_NAV_SCREENS.EXPENSE} component={Expense} />
       <TOP_TAB.Screen name={TOP_NAV_SCREENS.INCOME} component={Income} />

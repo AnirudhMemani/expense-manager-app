@@ -7,7 +7,7 @@ import {
   TouchableHighlight,
   Image,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {globalStyles} from '../utils/globalStyles';
 import {DatePickerModal} from 'react-native-paper-dates';
 import {CustomText} from '../components/CustomText';
@@ -20,7 +20,6 @@ import {CustomInput} from './CustomInput';
 import {useGlobalContext} from './ContextProvider';
 import {ErrorMsg} from './ErrorMsg';
 import {CustomChips} from './Chips';
-import {ITagProps} from './types';
 import {printLogs} from '../utils/log-utils';
 import {Camera} from 'react-native-vision-camera';
 import {AlertWithOneActionableOption} from '../utils/alert-utils';
@@ -29,29 +28,41 @@ import {PhotoOptionsModal} from './PhotoOptionsModal';
 import {PHOTO_BUTTON_ICON, PHOTO_BUTTON_TTILE} from './constants';
 import {STACK_SCREENS} from '../navigations/constants';
 import {useAppDispatch, useAppSelector} from '../redux/hooks';
-import {setDisplayImageUri, setTags} from '../redux/reducers/transaction-slice';
-import {TabButton} from './TabButton';
+import {
+  setCurrentValue,
+  setDisplayImageUri,
+  setTags,
+  setTransactionAmount,
+} from '../redux/reducers/transaction-slice';
+import {Calculator} from './CalculatorApp/Calculator';
 
 export const NewTransaction: React.FC<{
   navigation: NativeStackNavigationProp<any, any>;
 }> = ({navigation}) => {
   // <-- useStates -->
   const [visible, setVisible] = useState<boolean>(false);
-  const [date, setDate] = useState<string>(
-    dateFormatter(new Date(), 'numeric'),
-  );
   const [calendarDate, setCalendarDate] = useState<CalendarDate>();
   const [isInputEmpty, setIsInputEmpty] = useState(false);
   const [isExceededCharLimit, setIsExceededCharLimit] = useState(false);
-  const [isExceededNumericLimit, setIsExceededNumericLimit] = useState(false);
   const [tagsInputText, setTagsInputText] = useState<string>();
+  const [isExceededNumericLimit, setIsExceededNumericLimit] = useState(false);
+  const [date, setDate] = useState<string>(
+    dateFormatter(new Date(), 'numeric'),
+  );
   const [isPhotoOptionsVisible, setIsPhotoOptionsVisible] =
     useState<boolean>(false);
+  const [isCalculatorVisible, setIsCalculatorVisible] =
+    useState<boolean>(false);
+
+  // <-- Redux -->
   const dispatch = useAppDispatch();
   const displayImageUri = useAppSelector(
     state => state.transaction.displayImageUri,
   );
   const tag = useAppSelector(state => state.transaction.tags);
+  const transactionAmount = useAppSelector(
+    state => state.transaction.transactionAmount,
+  );
 
   // <-- useContext -->
   const {commonMargin} = useGlobalContext();
@@ -89,22 +100,48 @@ export const NewTransaction: React.FC<{
     }
   };
 
+  // <-- Calculator -->
+  const openCalculator = () => {
+    setIsCalculatorVisible(true);
+  };
+
+  const closeCalculator = () => {
+    setIsCalculatorVisible(false);
+    dispatch(setCurrentValue(''));
+  };
+
   // <-- Camera -->
   const openBackCamera = async () => {
-    const hasCameraPermission = await Camera.getCameraPermissionStatus();
-    printLogs('Permission to open camera:', hasCameraPermission);
-    if (hasCameraPermission === 'not-determined') {
-      const grantCameraPermission = await Camera.requestCameraPermission();
-      printLogs('Did user give camera permission:', grantCameraPermission);
-      if (grantCameraPermission === 'authorized') {
-        setIsPhotoOptionsVisible(false);
+    try {
+      const hasCameraPermission = await Camera.getCameraPermissionStatus();
+      printLogs('Permission to open camera:', hasCameraPermission);
+      if (hasCameraPermission === 'not-determined') {
+        const grantCameraPermission = await Camera.requestCameraPermission();
+        printLogs('Did user give camera permission:', grantCameraPermission);
+        if (grantCameraPermission === 'authorized') {
+          try {
+            return await launchCamera(
+              {
+                mediaType: 'photo',
+                cameraType: 'back',
+                quality: 1,
+                saveToPhotos: true,
+              },
+              imageObject => {
+                dispatch(setDisplayImageUri(imageObject.assets?.[0].uri));
+              },
+            );
+          } catch (error) {
+            printLogs('launchCamera() error:', error);
+          }
+        }
+      } else if (hasCameraPermission === 'authorized') {
         try {
-          return await launchCamera(
+          await launchCamera(
             {
               mediaType: 'photo',
               cameraType: 'back',
               quality: 1,
-              saveToPhotos: true,
             },
             imageObject => {
               dispatch(setDisplayImageUri(imageObject.assets?.[0].uri));
@@ -113,38 +150,27 @@ export const NewTransaction: React.FC<{
         } catch (error) {
           printLogs('launchCamera() error:', error);
         }
-      }
-    } else if (hasCameraPermission === 'authorized') {
-      setIsPhotoOptionsVisible(false);
-      try {
-        await launchCamera(
-          {
-            mediaType: 'photo',
-            cameraType: 'back',
-            quality: 1,
-          },
-          imageObject => {
-            dispatch(setDisplayImageUri(imageObject.assets?.[0].uri));
+      } else if (hasCameraPermission === 'denied') {
+        AlertWithOneActionableOption(
+          'Permission Denied',
+          "Please provide permission to open the camera in the app' settings!",
+          'Open settings',
+          true,
+          openSettings => {
+            if (openSettings) {
+              Linking.openSettings();
+            }
           },
         );
-      } catch (error) {
-        printLogs('launchCamera() error:', error);
       }
-    } else if (hasCameraPermission === 'denied') {
-      AlertWithOneActionableOption(
-        'Permission Denied',
-        "Please provide permission to open the camera in the app' settings!",
-        'Open settings',
-        true,
-        openSettings => {
-          if (openSettings) {
-            Linking.openSettings();
-          }
-        },
-      );
+    } catch (error) {
+      printLogs('openBackCamera() ERROR:', error);
+    } finally {
+      setIsPhotoOptionsVisible(false);
     }
   };
 
+  // <-- Gallery -->
   const openPhotoGallery = async () => {
     try {
       const selectedPhoto = await launchImageLibrary({
@@ -154,6 +180,8 @@ export const NewTransaction: React.FC<{
       dispatch(setDisplayImageUri(selectedPhoto.assets?.[0].uri));
     } catch (error) {
       printLogs('launchImageLibrary() error:', error);
+    } finally {
+      setIsPhotoOptionsVisible(false);
     }
   };
 
@@ -189,6 +217,7 @@ export const NewTransaction: React.FC<{
           />
           <CustomInput
             placeholder="0"
+            placeholderTintColor={globalColors.inherit}
             maxLength={10}
             setIsInputEmpty={setIsInputEmpty}
             autoFocus={true}
@@ -197,14 +226,18 @@ export const NewTransaction: React.FC<{
             setIsExceededCharLimit={setIsExceededNumericLimit}
             defaultValue={'0'}
             extraStyles={{color: globalColors.white}}
+            onChangeText={text => dispatch(setTransactionAmount(text))}
+            value={transactionAmount}
           />
-          <TabIcon
-            name="calculator"
-            type={VectorIcons.fontAwesome6}
-            props={{focused: false}}
-            size={25}
-            color={globalColors.inherit_light}
-          />
+          <TouchableOpacity activeOpacity={0.5} onPress={openCalculator}>
+            <TabIcon
+              name="calculator"
+              type={VectorIcons.fontAwesome6}
+              props={{focused: false}}
+              size={25}
+              color={globalColors.inherit_light}
+            />
+          </TouchableOpacity>
         </View>
         {isInputEmpty && <ErrorMsg message={ERROR_MESSAGE.EMPTY_TEXT_INPUT} />}
         {isExceededNumericLimit && (
@@ -344,7 +377,11 @@ export const NewTransaction: React.FC<{
             : PHOTO_BUTTON_TTILE.ADD_PHOTOS}
         </CustomText>
         <TouchableOpacity
-          onPress={() => dispatch(setDisplayImageUri(undefined))}
+          onPress={() =>
+            displayImageUri
+              ? dispatch(setDisplayImageUri(undefined))
+              : setIsPhotoOptionsVisible(true)
+          }
           activeOpacity={0.5}>
           <TabIcon
             name={
@@ -382,6 +419,9 @@ export const NewTransaction: React.FC<{
           </TouchableOpacity>
         </View>
       )}
+
+      {/* Calculator UI */}
+      <Calculator visible={isCalculatorVisible} onPress={closeCalculator} />
 
       {/* Date Picker Modal */}
       <DatePickerModal

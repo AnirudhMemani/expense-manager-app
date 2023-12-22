@@ -1,4 +1,4 @@
-import {combineReducers, configureStore} from '@reduxjs/toolkit';
+import {combineReducers, configureStore, ThunkAction} from '@reduxjs/toolkit';
 import incomeSlice from './reducers/income-slice';
 import loginSlice from './reducers/login-slice';
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -42,3 +42,10 @@ export let persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  any
+>;

@@ -4,7 +4,6 @@ import {TCustomTextInputProps} from './types';
 import {globalStyles} from '../utils/globalStyles';
 import {globalColors} from '../utils/globalColors';
 import {APP_SETTINGS} from '../utils/app-settings';
-import {printLogs} from '../utils/log-utils';
 
 export const CustomInput: React.FC<TCustomTextInputProps> = ({
   reference,
@@ -31,9 +30,12 @@ export const CustomInput: React.FC<TCustomTextInputProps> = ({
   >(30);
 
   const default_max_height = 9 * 19 + 30;
+  const BASE_HEIGHT = 30;
+  const SINGLE_LINE_INCREMENT = 19;
 
+  // (numberOfLines - 1) because the BASE_HEIGHT is 30, if the number of lines is 1 then it shouldn't increment the height by SINGLE_LINE_INCREMENT of 19 since the height increments by 19 for every new line.
   const maxHeight = numberOfLines
-    ? (numberOfLines - 1) * 19 + 30
+    ? (numberOfLines - 1) * SINGLE_LINE_INCREMENT + BASE_HEIGHT
     : default_max_height;
 
   useEffect(() => {
@@ -43,6 +45,9 @@ export const CustomInput: React.FC<TCustomTextInputProps> = ({
       } else {
         setIsInputEmpty(true);
       }
+    }
+    if (onChangeText) {
+      onChangeText(inputText ?? '');
     }
   }, [inputText]);
 
@@ -64,28 +69,24 @@ export const CustomInput: React.FC<TCustomTextInputProps> = ({
         placeholderTextColor={placeholderTintColor ?? globalColors.white}
         autoFocus={autoFocus}
         maxFontSizeMultiplier={APP_SETTINGS.MAX_FONT_SIZE_MULTIPLIER}
-        onChangeText={
-          onChangeText
-            ? onChangeText
-            : text => {
-                const numericInput = text.replace(/^0+|[^0-9]/g, '');
-                if (maxLength) {
-                  if (text.length > maxLength) {
-                    setIsExceededCharLimit && setIsExceededCharLimit(true);
-                    Keyboard.dismiss();
-                  } else {
-                    setIsExceededCharLimit && setIsExceededCharLimit(false);
-                    keyboardType == 'numeric'
-                      ? setInputText(numericInput)
-                      : setInputText(text);
-                  }
-                } else {
-                  keyboardType == 'numeric'
-                    ? setInputText(numericInput)
-                    : setInputText(text);
-                }
-              }
-        }
+        onChangeText={text => {
+          const numericInput = text.replace(/^0+|[^0-9]/g, '');
+          if (maxLength) {
+            if (text.length > maxLength) {
+              setIsExceededCharLimit && setIsExceededCharLimit(true);
+              Keyboard.dismiss();
+            } else {
+              setIsExceededCharLimit && setIsExceededCharLimit(false);
+              keyboardType == 'numeric'
+                ? setInputText(numericInput)
+                : setInputText(text);
+            }
+          } else {
+            keyboardType == 'numeric'
+              ? setInputText(numericInput)
+              : setInputText(text);
+          }
+        }}
         value={value ?? inputText}
         onContentSizeChange={props => {
           if (props.nativeEvent.contentSize.height <= maxHeight) {
@@ -96,7 +97,7 @@ export const CustomInput: React.FC<TCustomTextInputProps> = ({
         multiline={multiline}
         scrollEnabled={true}
         numberOfLines={numberOfLines}
-        defaultValue={inputText}
+        defaultValue={defaultValue}
         onKeyPress={onKeyPress}
       />
     </>

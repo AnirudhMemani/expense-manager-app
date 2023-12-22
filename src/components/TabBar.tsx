@@ -21,7 +21,6 @@ export const TabBar = (props: MaterialTopTabBarProps) => {
       <View style={styles.tabBar_content}>
         {state.routes.map((route, index) => {
           const {options} = descriptors[route.key];
-          printLogs('options:', options);
           const label =
             options.tabBarLabel !== undefined
               ? options.tabBarLabel

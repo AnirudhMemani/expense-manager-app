@@ -77,7 +77,11 @@ const Login: React.FC<TLoginProps> = ({navigation}) => {
   };
 
   return (
-    <View style={globalStyles.container}>
+    <View
+      style={[
+        globalStyles.container,
+        {backgroundColor: globalColors.header_blue},
+      ]}>
       <View style={[styles.contentContainer, {margin: commonMargin}]}>
         <CustomText
           extraStyles={{
@@ -107,7 +111,17 @@ const Login: React.FC<TLoginProps> = ({navigation}) => {
           activeOpacity={1}
           style={[
             styles.button,
-            {padding: commonSpace, marginVertical: commonSpace},
+            {
+              padding: commonSpace,
+              marginVertical: commonSpace,
+              borderWidth: 1,
+              borderColor: globalColors.header_blue,
+              shadowColor: globalColors.cyan,
+              shadowOffset: {width: 0, height: 2},
+              shadowOpacity: 0.5,
+              shadowRadius: 2,
+              elevation: 6,
+            },
           ]}
           onPress={googleSignAuthentication}>
           <Image
@@ -123,11 +137,16 @@ const Login: React.FC<TLoginProps> = ({navigation}) => {
           style={[
             styles.button,
             {
-              backgroundColor: 'black',
+              backgroundColor: globalColors.guest_btn_bg_blue,
               borderWidth: 1,
-              borderColor: globalColors.button_inactive,
+              borderColor: globalColors.cyan,
               padding: commonSpace,
               marginVertical: commonSpace,
+              shadowColor: globalColors.cyan,
+              shadowOffset: {width: 0, height: 2},
+              shadowOpacity: 0.5,
+              shadowRadius: 12,
+              elevation: 6,
             },
           ]}
           onPress={guestSignin}>

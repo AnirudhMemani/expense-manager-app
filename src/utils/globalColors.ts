@@ -21,4 +21,5 @@ export const globalColors = {
   chip_bg: '#222126',
   semi_transparent: 'rgba(0, 0, 0, 0.5)',
   header_blue: '#1f4e80',
+  guest_btn_bg_blue: '#235a94',
 };
